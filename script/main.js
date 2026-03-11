@@ -318,6 +318,18 @@ class App {
     const container = document.getElementById('floating-images-container');
     if (!container) return;
 
+    const enableRotation = this.getFloatingImageRotationConfig();
+    
+    if (!enableRotation) {
+      if (window.floatingImagesInstance) {
+        window.floatingImagesInstance.destroy();
+        window.floatingImagesInstance = null;
+      }
+      container.innerHTML = '';
+      console.log('[App] floating image 已禁用，不进行初始化');
+      return;
+    }
+
     if (window.floatingImagesInstance) {
       window.floatingImagesInstance.destroy();
       window.floatingImagesInstance = null;
@@ -342,14 +354,43 @@ class App {
       minSpeed: 30,
       maxSpeed: 60,
       safeMargin: 10,
-      imageSize: 188,
+      imageSize: 100,
       textSafeMargin: 30,
       maxOverlapRatio: 0.15,
       debugMode: true,
-      storageKey: 'tunan-floating-images'
+      storageKey: 'tunan-floating-images',
+      enableRotation: enableRotation
     };
 
     window.floatingImagesInstance = new window.FloatingImages(config);
+  }
+
+  getFloatingImageRotationConfig() {
+    try {
+      const stored = localStorage.getItem('floatingImageRotationEnabled');
+      if (stored !== null) {
+        return stored === 'true';
+      }
+    } catch (e) {
+      console.warn('[App] 读取floatingImageRotationEnabled配置失败:', e);
+    }
+    return false;
+  }
+
+  setFloatingImageRotationConfig(enabled) {
+    try {
+      localStorage.setItem('floatingImageRotationEnabled', enabled ? 'true' : 'false');
+      console.log(`[App] floatingImageRotationEnabled 已设置为: ${enabled}`);
+    } catch (e) {
+      console.warn('[App] 设置floatingImageRotationEnabled配置失败:', e);
+    }
+  }
+
+  toggleFloatingImageRotation() {
+    const current = this.getFloatingImageRotationConfig();
+    this.setFloatingImageRotationConfig(!current);
+    this.initFloatingImages();
+    return !current;
   }
 
   compressImage(file, callback) {
@@ -603,5 +644,9 @@ class App {
 
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
+  window.appInstance = app;
+  window.setFloatingImageRotation = (enabled) => app.setFloatingImageRotationConfig(enabled);
+  window.toggleFloatingImageRotation = () => app.toggleFloatingImageRotation();
+  window.getFloatingImageRotation = () => app.getFloatingImageRotationConfig();
   app.init();
 });

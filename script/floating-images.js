@@ -11,10 +11,11 @@ class FloatingImages {
     this.minSpeed = options.minSpeed || 30;
     this.maxSpeed = options.maxSpeed || 60;
     this.safeMargin = options.safeMargin || 10;
-    this.imageSize = options.imageSize || 120;
+    this.imageSize = options.imageSize || 30;
     this.storageKey = options.storageKey || 'tunan-floating-images';
     this.textSafeMargin = options.textSafeMargin || 20;
     this.maxOverlapRatio = options.maxOverlapRatio || 0.15;
+    this.enableRotation = options.enableRotation !== undefined ? options.enableRotation : false;
 
     this.container = null;
     this.imageElements = [];
@@ -592,6 +593,8 @@ class FloatingImages {
   }
 
   updateRotations(deltaTime) {
+    if (!this.enableRotation) return;
+    
     this.imageElements.forEach((imgWrapper, index) => {
       const state = this.imageStates[index];
 
