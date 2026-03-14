@@ -45,8 +45,87 @@ class App {
         e.preventDefault();
         const target = link.dataset.nav;
         this.navigateTo(target);
+        this.closeMobileMenu();
       });
     });
+
+    this.initMobileMenu();
+  }
+
+  initMobileMenu() {
+    console.log('[App] initMobileMenu called');
+    
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    console.log('[App] menuToggle element:', menuToggle);
+    console.log('[App] mobileMenu element:', mobileMenu);
+    
+    if (!menuToggle || !mobileMenu) {
+      console.error('[App] ERROR: menuToggle or mobileMenu not found!');
+      return;
+    }
+
+    const handleMenuToggle = (e) => {
+      console.log('[App] Button clicked!', e);
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const isActive = mobileMenu.classList.contains('active');
+      console.log('[App] Menu is active:', isActive);
+      
+      if (isActive) {
+        this.closeMobileMenu();
+      } else {
+        this.openMobileMenu();
+      }
+    };
+
+    menuToggle.addEventListener('click', handleMenuToggle);
+    console.log('[App] Click listener attached successfully');
+    
+    const closeMenuOnOutsideClick = (e) => {
+      if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        this.closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('click', closeMenuOnOutsideClick);
+    document.addEventListener('touchstart', closeMenuOnOutsideClick);
+
+    const closeMenuOnRouteChange = () => {
+      this.closeMobileMenu();
+    };
+
+    window.router.beforeEach(() => {
+      this.closeMobileMenu();
+    });
+  }
+
+  openMobileMenu() {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (!menuToggle || !mobileMenu) return;
+
+    mobileMenu.classList.add('active');
+    mobileMenu.setAttribute('aria-hidden', 'false');
+    menuToggle.classList.add('active');
+    menuToggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeMobileMenu() {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (!menuToggle || !mobileMenu) return;
+
+    mobileMenu.classList.remove('active');
+    mobileMenu.setAttribute('aria-hidden', 'true');
+    menuToggle.classList.remove('active');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
   }
 
   initLanguageSwitcher() {
@@ -490,6 +569,11 @@ class App {
       content.innerHTML = this.getHomeTemplate();
       this.attachHomeEvents();
     }
+    if (window.heroVideoBackground) {
+      window.heroVideoBackground.destroy();
+      window.heroVideoBackground = new HeroVideoBackground();
+      window.heroVideoBackground.init();
+    }
   }
 
   renderProducts() {
@@ -680,5 +764,36 @@ document.addEventListener('DOMContentLoaded', () => {
   window.setFloatingImageRotation = (enabled) => app.setFloatingImageRotationConfig(enabled);
   window.toggleFloatingImageRotation = () => app.toggleFloatingImageRotation();
   window.getFloatingImageRotation = () => app.getFloatingImageRotationConfig();
+  
+  window.toggleMobileMenu = function() {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    console.log('[toggleMobileMenu] Button:', menuBtn);
+    console.log('[toggleMobileMenu] Menu:', mobileMenu);
+    
+    if (!menuBtn || !mobileMenu) {
+      console.error('[toggleMobileMenu] Elements not found!');
+      return;
+    }
+    
+    const isActive = mobileMenu.classList.contains('active');
+    console.log('[toggleMobileMenu] isActive:', isActive);
+    
+    if (isActive) {
+      mobileMenu.classList.remove('active');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuBtn.classList.remove('active');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    } else {
+      mobileMenu.classList.add('active');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      menuBtn.classList.add('active');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+  };
+  
   app.init();
 });

@@ -350,6 +350,7 @@ class HeroVideoBackground {
 }
 
 window.heroVideoBackground = new HeroVideoBackground();
+window.HeroVideoBackground = HeroVideoBackground;
 
 window.updateHeroVideoConfig = (config) => {
   window.heroVideoBackground.updateConfig(config);

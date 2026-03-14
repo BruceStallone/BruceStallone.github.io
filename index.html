@@ -33,14 +33,18 @@
           <button class="lang-btn" data-lang="en" aria-label="Switch to English" aria-pressed="false">English</button>
         </div>
         
-        <button class="mobile-menu-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu">
+        <button class="mobile-menu-toggle" id="mobile-menu-btn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobile-menu" onclick="toggleMobileMenu()">
           <span class="menu-icon"></span>
         </button>
       </div>
     </nav>
     
     <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()" aria-label="关闭菜单">
+        <span class="close-icon"></span>
+      </button>
       <ul class="mobile-nav">
+        <li><a href="/" class="mobile-nav-link" data-nav="home" data-i18n="nav.home">首页</a></li>
         <li><a href="/products" class="mobile-nav-link" data-nav="products" data-i18n="nav.products">产品介绍</a></li>
         <li><a href="/team" class="mobile-nav-link" data-nav="team" data-i18n="nav.team">团队介绍</a></li>
       </ul>
