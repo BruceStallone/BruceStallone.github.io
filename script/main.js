@@ -7,6 +7,9 @@ import './hero-video.js';
 class App {
   constructor() {
     this.initialized = false;
+    this._navBound = false;
+    this._menuController = null;
+    this._routeHookAdded = false;
   }
 
   async init() {
@@ -38,42 +41,38 @@ class App {
   }
 
   initNavigation() {
-    const navLinks = document.querySelectorAll('[data-nav]');
-    
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = link.dataset.nav;
-        this.navigateTo(target);
-        this.closeMobileMenu();
-      });
+    if (this._navBound) return;
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-nav]');
+      if (!btn) return;
+      e.preventDefault();
+      const target = btn.dataset.nav;
+      this.navigateTo(target);
+      this.closeMobileMenu();
     });
 
     this.initMobileMenu();
+    this._navBound = true;
   }
 
   initMobileMenu() {
-    console.log('[App] initMobileMenu called');
-    
     const menuToggle = document.querySelector('.mobile-menu-toggle');
     const mobileMenu = document.getElementById('mobile-menu');
     
-    console.log('[App] menuToggle element:', menuToggle);
-    console.log('[App] mobileMenu element:', mobileMenu);
-    
-    if (!menuToggle || !mobileMenu) {
-      console.error('[App] ERROR: menuToggle or mobileMenu not found!');
-      return;
+    if (!menuToggle || !mobileMenu) return;
+
+    if (this._menuController) {
+      this._menuController.abort();
     }
+    this._menuController = new AbortController();
+    const { signal } = this._menuController;
 
     const handleMenuToggle = (e) => {
-      console.log('[App] Button clicked!', e);
       e.preventDefault();
       e.stopPropagation();
       
       const isActive = mobileMenu.classList.contains('active');
-      console.log('[App] Menu is active:', isActive);
-      
       if (isActive) {
         this.closeMobileMenu();
       } else {
@@ -81,25 +80,21 @@ class App {
       }
     };
 
-    menuToggle.addEventListener('click', handleMenuToggle);
-    console.log('[App] Click listener attached successfully');
-    
+    menuToggle.addEventListener('click', handleMenuToggle, { signal });
+
     const closeMenuOnOutsideClick = (e) => {
       if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
         this.closeMobileMenu();
       }
     };
 
-    document.addEventListener('click', closeMenuOnOutsideClick);
-    document.addEventListener('touchstart', closeMenuOnOutsideClick);
+    document.addEventListener('click', closeMenuOnOutsideClick, { signal });
+    document.addEventListener('touchstart', closeMenuOnOutsideClick, { signal, passive: true });
 
-    const closeMenuOnRouteChange = () => {
-      this.closeMobileMenu();
-    };
-
-    window.router.beforeEach(() => {
-      this.closeMobileMenu();
-    });
+    if (!this._routeHookAdded) {
+      window.router.beforeEach(() => this.closeMobileMenu());
+      this._routeHookAdded = true;
+    }
   }
 
   openMobileMenu() {
@@ -742,18 +737,15 @@ class App {
   }
 
   attachHomeEvents() {
-    this.initNavigation();
     this.initHeroVideo();
     window.heroAnimations.init();
     window.dissolveAnimationManager.init();
   }
 
   attachProductsEvents() {
-    this.initNavigation();
   }
 
   attachTeamEvents() {
-    this.initNavigation();
   }
 }
 
