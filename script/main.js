@@ -17,7 +17,6 @@ class App {
     
     await window.i18n.init();
     this.initRouter();
-    this.initNavigation();
     this.initLanguageSwitcher();
     this.initLogoUpload();
     this.initFloatingImages();
@@ -58,7 +57,7 @@ class App {
   }
 
   initMobileMenu() {
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const menuToggle = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     
     if (!menuToggle || !mobileMenu) return;
@@ -69,23 +68,11 @@ class App {
     this._menuController = new AbortController();
     const { signal } = this._menuController;
 
-    const handleMenuToggle = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const isActive = mobileMenu.classList.contains('active');
-      if (isActive) {
-        this.closeMobileMenu();
-      } else {
-        this.openMobileMenu();
-      }
-    };
-
-    menuToggle.addEventListener('click', handleMenuToggle, { signal });
-
     const closeMenuOnOutsideClick = (e) => {
-      if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
-        this.closeMobileMenu();
+      if (mobileMenu.classList.contains('active') &&
+          !mobileMenu.contains(e.target) && 
+          !menuToggle.contains(e.target)) {
+        window.toggleMobileMenu();
       }
     };
 
@@ -93,7 +80,12 @@ class App {
     document.addEventListener('touchstart', closeMenuOnOutsideClick, { signal, passive: true });
 
     if (!this._routeHookAdded) {
-      window.router.beforeEach(() => this.closeMobileMenu());
+      window.router.beforeEach(() => {
+        const menu = document.getElementById('mobile-menu');
+        if (menu && menu.classList.contains('active')) {
+          window.toggleMobileMenu();
+        }
+      });
       this._routeHookAdded = true;
     }
   }
@@ -629,6 +621,7 @@ class App {
       }, 50);
     }
 
+    this.initNavigation();
     this.initFloatingImages();
     this.initHeroVideo();
     window.heroAnimations.init();
