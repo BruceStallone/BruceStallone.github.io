@@ -7,7 +7,8 @@
   "nav": {
     "products": "Games",
     "team": "Team",
-    "home": "Home"
+    "home": "Home",
+    "social": "Follow Us"
   },
   "hero": {
     "title": "Explore Gaming Worlds",
@@ -76,5 +77,51 @@
   "language": {
     "current": "English",
     "switch": "Switch Language"
+  },
+  "social": {
+    "title": "Come Follow Us!",
+    "subtitle": "You can find us in many places~~~",
+    "bilibili": {
+      "name": "Bilibili",
+      "id": "Official Account",
+      "desc": "Click to jump to the Bilibili page",
+      "link": "https://space.bilibili.com/1998764",
+      "ariaLabel": "Visit our official Bilibili account"
+    },
+    "xiaohongshu": {
+      "name": "Xiaohongshu",
+      "id": "Official Account",
+      "desc": "Click to jump to the Xiaohongshu page",
+      "link": "https://xhslink.com/m/9SQhZNBXYe6",
+      "ariaLabel": "Visit our official Xiaohongshu account"
+    },
+    "weibo": {
+      "name": "Weibo",
+      "id": "Official Account",
+      "desc": "Click to jump to the Weibo page",
+      "link": "https://weibo.com/u/7454292770",
+      "ariaLabel": "Visit our official Weibo account"
+    },
+    "douyin": {
+      "name": "Douyin",
+      "id": "Official Account",
+      "desc": "Click to jump to the Douyin page",
+      "link": "https://v.douyin.com/7aRwjrswLog/",
+      "ariaLabel": "Visit our official Douyin account"
+    },
+    "aifadian": {
+      "name": "Ifadian",
+      "id": "Official Account",
+      "desc": "Click to jump to the Ifadian page",
+      "link": "https://ifdian.net/a/tunanstudio",
+      "ariaLabel": "Visit our official Aifadian account"
+    },
+    "steam": {
+      "name": "Steam",
+      "id": "Official Account",
+      "desc": "Click to jump to the Steam page",
+      "link": "https://store.steampowered.com/curator/45776652",
+      "ariaLabel": "Visit our official Steam account"
+    }
   }
 }

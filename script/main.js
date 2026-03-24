@@ -35,6 +35,7 @@ class App {
       .addRoute('/products', () => this.renderProducts())
       .addRoute('/product', () => this.renderProducts())
       .addRoute('/team', () => this.renderTeam())
+      .addRoute('/social', () => this.renderSocial())
       .beforeEach((path) => this.beforeRouteChange(path))
       .afterEach((path) => this.afterRouteChange(path))
       .init();
@@ -287,6 +288,20 @@ class App {
         window.heroAnimations.init();
         window.lazyImageLoader.init();
       }
+    } else if (currentPath === '/social') {
+      const socialGrid = document.querySelector('.social-grid');
+      if (socialGrid) {
+        const container = socialGrid.parentElement;
+        const pageHeader = container.querySelector('.page-header');
+        if (pageHeader) {
+          const socialData = window.i18n.get('social');
+          pageHeader.querySelector('.page-title').textContent = socialData.title;
+          pageHeader.querySelector('.page-subtitle').textContent = socialData.subtitle;
+        }
+        socialGrid.innerHTML = this.generateSocialCards();
+        window.heroAnimations.init();
+        window.lazyImageLoader.init();
+      }
     } else if (currentPath === '/') {
       const brandCn = document.querySelector('.brand-cn');
       const brandEn = document.querySelector('.brand-en');
@@ -354,6 +369,52 @@ class App {
         </div>
       </article>
     `).join('');
+  }
+
+  generateSocialCards() {
+    const socialData = window.i18n.get('social');
+    const platforms = this.getSocialPlatforms(socialData);
+    
+    return platforms.map(platform => {
+      const platformData = socialData[platform];
+      const placeholder = this.getPlatformPlaceholder(platform);
+      return `
+        <article class="social-card" data-animate data-platform="${platform}">
+          <a href="${platformData.link}" class="social-card-link" target="_blank" rel="noopener noreferrer" aria-label="${platformData.ariaLabel}">
+            <div class="social-card-icon">
+              <img src="img/social/${platform}.svg" alt="${platformData.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <span class="social-icon-placeholder" style="display: none;">${placeholder}</span>
+            </div>
+            <div class="social-card-content">
+              <h2 class="social-platform-name">${platformData.name}</h2>
+              <p class="social-platform-id">${platformData.id}</p>
+              <p class="social-platform-desc">${platformData.desc}</p>
+            </div>
+            <div class="social-card-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </a>
+        </article>
+      `;
+    }).join('');
+  }
+
+  getSocialPlatforms(socialData) {
+    const excludeKeys = ['title', 'subtitle'];
+    return Object.keys(socialData).filter(key => !excludeKeys.includes(key));
+  }
+
+  getPlatformPlaceholder(platform) {
+    const placeholders = {
+      'bilibili': 'B',
+      'xiaohongshu': '红',
+      'weibo': '微',
+      'douyin': '抖',
+      'aifadian': '爱'
+    };
+    return placeholders[platform] || platform.charAt(0).toUpperCase();
   }
 
   initLogoUpload() {
@@ -540,7 +601,8 @@ class App {
       'home': '/',
       'products': '/products',
       'product': '/products',
-      'team': '/team'
+      'team': '/team',
+      'social': '/social'
     };
     
     const path = routes[target] || '/';
@@ -602,6 +664,17 @@ class App {
       content.innerHTML = this.getTeamTemplate();
       this.attachTeamEvents();
     }
+  }
+
+  renderSocial() {
+    const content = document.getElementById('main-content');
+    if (content) {
+      content.innerHTML = this.getSocialTemplate();
+      this.attachSocialEvents();
+    }
+  }
+
+  attachSocialEvents() {
   }
 
   getHomeTemplate() {
@@ -760,6 +833,51 @@ class App {
           
           <div class="team-grid">
             ${memberCards}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  getSocialTemplate() {
+    const socialData = window.i18n.get('social');
+    const platforms = this.getSocialPlatforms(socialData);
+    
+    const socialCards = platforms.map(platform => {
+      const platformData = socialData[platform];
+      const placeholder = this.getPlatformPlaceholder(platform);
+      return `
+        <article class="social-card" data-animate data-platform="${platform}">
+          <a href="${platformData.link}" class="social-card-link" target="_blank" rel="noopener noreferrer" aria-label="${platformData.ariaLabel}">
+            <div class="social-card-icon">
+              <img src="img/social/${platform}.svg" alt="${platformData.name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <span class="social-icon-placeholder" style="display: none;">${placeholder}</span>
+            </div>
+            <div class="social-card-content">
+              <h2 class="social-platform-name">${platformData.name}</h2>
+              <p class="social-platform-id">${platformData.id}</p>
+              <p class="social-platform-desc">${platformData.desc}</p>
+            </div>
+            <div class="social-card-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </a>
+        </article>
+      `;
+    }).join('');
+
+    return `
+      <section class="page social-page">
+        <div class="container">
+          <header class="page-header">
+            <h1 class="page-title" data-i18n="social.title">${socialData.title}</h1>
+            <p class="page-subtitle" data-i18n="social.subtitle">${socialData.subtitle}</p>
+          </header>
+          
+          <div class="social-grid">
+            ${socialCards}
           </div>
         </div>
       </section>
