@@ -38,6 +38,10 @@
   },
   "team": {
     "title": "Our Team",
+    "sectionTitle": "About TunanStudio",
+    "intro": "We are a passionate game development team. Since the studio's founding, we have been dedicated to crafting games with unique aesthetic styles and profound emotional resonance. We believe that every game is a brand new narrative adventure, and our goal is to help players discover their own stories and emotional connections within the games.",
+    "vision": "Our vision is to create game experiences that touch people's hearts, allowing players to feel the flow of real emotions in virtual worlds. We pursue not the accumulation of technology, but the expression of emotions and resonance.",
+    "membersTitle": "Team Members",
     "members": [
       {
         "id": "1",

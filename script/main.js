@@ -261,9 +261,27 @@ class App {
       const teamGrid = document.querySelector('.team-grid');
       if (teamGrid) {
         const container = teamGrid.parentElement;
-        const pageTitle = container.querySelector('.page-title');
-        if (pageTitle) {
-          pageTitle.textContent = window.i18n.get('team.title');
+        const sectionHeader = container.querySelector('.team-section-header');
+        if (sectionHeader) {
+          const sectionTitle = sectionHeader.querySelector('.team-section-title');
+          if (sectionTitle) {
+            sectionTitle.textContent = window.i18n.get('team.sectionTitle');
+          }
+        }
+        const teamIntroSection = container.querySelector('.team-intro-section');
+        if (teamIntroSection) {
+          const teamIntro = teamIntroSection.querySelector('.team-intro');
+          const teamVision = teamIntroSection.querySelector('.team-vision');
+          if (teamIntro) {
+            teamIntro.textContent = window.i18n.get('team.intro');
+          }
+          if (teamVision) {
+            teamVision.textContent = window.i18n.get('team.vision');
+          }
+        }
+        const membersTitle = container.querySelector('.team-members-title');
+        if (membersTitle) {
+          membersTitle.textContent = window.i18n.get('team.membersTitle');
         }
         teamGrid.innerHTML = this.generateTeamCards();
         window.heroAnimations.init();
@@ -721,13 +739,25 @@ class App {
       </article>
     `).join('');
 
+    const teamSectionTitle = window.i18n.get('team.sectionTitle');
+    const teamIntro = window.i18n.get('team.intro');
+    const teamVision = window.i18n.get('team.vision');
+    const membersTitle = window.i18n.get('team.membersTitle');
+
     return `
       <section class="page team-page">
         <div class="container">
-          <header class="page-header" data-animate>
-            <h1 class="page-title" data-i18n="team.title">${window.i18n.get('team.title')}</h1>
-          </header>
-          <hr class="section-divider">
+          <div class="team-section-header" data-animate>
+            <h1 class="team-section-title" data-i18n="team.sectionTitle">${teamSectionTitle}</h1>
+          </div>
+          
+          <section class="team-intro-section" data-animate>
+            <p class="team-intro" data-i18n="team.intro">${teamIntro}</p>
+            <p class="team-vision" data-i18n="team.vision">${teamVision}</p>
+          </section>
+          
+          <h1 class="team-members-title" data-i18n="team.membersTitle">${membersTitle}</h1>
+          
           <div class="team-grid">
             ${memberCards}
           </div>
