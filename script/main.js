@@ -718,6 +718,10 @@ class App {
     window.lazyImageLoader.init();
     window.dissolveAnimationManager.init();
     this.updateLanguageButtons();
+    
+    setTimeout(() => {
+      this.initScrollIndicator();
+    }, 100);
   }
 
   renderHome() {
@@ -1084,6 +1088,44 @@ class App {
   }
 
   attachProductsEvents() {
+    this.initScrollIndicator();
+  }
+
+  initScrollIndicator() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    const footer = document.querySelector('.footer');
+    
+    if (!scrollIndicator || !footer) return;
+
+    let ticking = false;
+
+    const checkFooterVisibility = () => {
+      const footerRect = footer.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const scrollIndicatorHeight = scrollIndicator.offsetHeight;
+      
+      const isFooterVisible = footerRect.top < viewportHeight && footerRect.bottom > 0;
+      
+      if (isFooterVisible) {
+        scrollIndicator.classList.add('hidden');
+      } else {
+        scrollIndicator.classList.remove('hidden');
+      }
+      
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(checkFooterVisibility);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', checkFooterVisibility, { passive: true });
+    
+    checkFooterVisibility();
   }
 
   attachTeamEvents() {

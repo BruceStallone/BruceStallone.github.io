@@ -1676,8 +1676,26 @@ ul, ol {
   aspect-ratio: 3 / 4;
   display: block;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background: var(--color-bg);
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+@media (max-width: 1024px) {
+  .book-card-link {
+    overflow: hidden;
+  }
+  
+  .book-card-cover,
+  .book-card-cover-placeholder {
+    transform: translate(-50%, -50%) !important;
+  }
+  
+  .book-card-cover::before,
+  .book-card-cover::after {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1685,13 +1703,80 @@ ul, ol {
     width: 100%;
     aspect-ratio: 3 / 4;
   }
+  
+  .book-card-cover,
+  .book-card-cover-placeholder {
+    width: 75% !important;
+    height: 85% !important;
+    transform: translate(-50%, -50%) !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin: 0 !important;
+  }
+  
+  .book-card:hover .book-card-cover {
+    transform: translate(-50%, -50%) !important;
+    box-shadow: 
+      0 6px 20px rgba(0, 0, 0, 0.2),
+      0 3px 10px rgba(0, 0, 0, 0.15) !important;
+  }
 }
 
 .book-card-cover {
-  width: 100%;
+  width: 70%;
+  height: 80%;
+  overflow: visible;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateY(-15deg);
+  transform-style: preserve-3d;
+  border-radius: 3px 6px 6px 3px;
+  box-shadow: 
+    -6px 0 12px -4px rgba(0, 0, 0, 0.35),
+    0 8px 25px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-card-cover::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 12px;
   height: 100%;
-  overflow: hidden;
-  position: relative;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.12) 40%,
+    rgba(0, 0, 0, 0.03) 70%,
+    rgba(255, 255, 255, 0.08) 90%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+  border-radius: 3px 0 0 3px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.book-card-cover::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 3%;
+  width: 1px;
+  height: 94%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+  border-radius: 1px;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .book-card-cover img {
@@ -1699,15 +1784,18 @@ ul, ol {
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
-}
-
-.book-card:hover .book-card-cover img {
-  transform: scale(1.05);
+  display: block;
+  border-radius: 3px 8px 8px 3px;
 }
 
 .book-card-cover-placeholder {
   width: 100%;
   height: 100%;
+  margin: 0;
+  top: 0;
+  left: 0;
+  transform: none;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1715,6 +1803,20 @@ ul, ol {
   color: rgba(255, 255, 255, 0.9);
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.book-card:hover .book-card-cover {
+  transform: translate(-50%, -50%) rotateY(-20deg);
+  box-shadow: 
+    -10px 0 18px -6px rgba(0, 0, 0, 0.45),
+    0 12px 35px rgba(0, 0, 0, 0.3),
+    0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .book-card-info {
@@ -1904,6 +2006,46 @@ ul, ol {
   
   .scroll-indicator-text {
     font-size: var(--font-size-xs);
+  }
+}
+
+.scroll-indicator {
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.scroll-indicator.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .scroll-indicator {
+    position: fixed;
+    bottom: var(--spacing-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: transparent;
+  }
+  
+  .scroll-indicator-circle {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .scroll-indicator-text {
+    color: rgba(45, 52, 54, 0.8);
+    text-shadow: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .scroll-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
